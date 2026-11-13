@@ -18,9 +18,9 @@ cómo está armado, cómo correrlo en local y cómo publicarlo en producción.
 ## Cómo funciona
 
 **Capas del backend.** Cada request entra por un `@RestController` (uno por prefijo de ruta),
-que delega en un `@Service`; los servicios usan repositorios de Spring Data R2DBC. No hay SQL
-en strings: consultas derivadas, entidades con `@Version` para bloqueo optimista y paginación,
-búsqueda y estadísticas resueltas en memoria sobre las filas leídas (el volumen es de demo).
+que delega en un `@Service`; los servicios usan repositorios de Spring Data R2DBC: consultas
+derivadas, entidades con `@Version` para bloqueo optimista y paginación, búsqueda y estadísticas
+resueltas en memoria sobre las filas leídas (el volumen es de demo).
 
 **Modelo de datos.** `franchises` → `branches` → `products` con borrado en cascada por claves
 foráneas. `users`, `roles` y `permissions` se relacionan por las tablas puente `user_roles` y
@@ -108,13 +108,11 @@ que correr `flyway repair` contra la base (el `db:reset` recrea el volumen desde
 
 ## Producción
 
-| Parte | Servicio | Configuración |
+| Parte | Servicio | URL / configuración |
 |---|---|---|
-| Frontend | Netlify | build `npm run build`, publicar `dist/frontend/browser`; `netlify.toml` con redirect a `index.html` |
-| Backend | Render (plan free, Docker) | web service desde `backend/Dockerfile`, 512 MB, duerme a los 15 min sin tráfico |
-| Base de datos | Neon (plan free) | PostgreSQL 1 GB, sin tarjeta |
-
-**Base.** Crear el proyecto en Neon y copiar el host, la base, el usuario y la contraseña.
+| Frontend | Netlify | https://acento-prueba.netlify.app · build y publicación desde `netlify.toml` |
+| Backend | Render (plan free, Docker) | https://acento-api.onrender.com · servidor desde `backend/Dockerfile`, 512 MB, duerme a los 15 min sin tráfico |
+| Base de datos | Neon (plan free) | proyecto `acento` en `aws-us-west-2`, PostgreSQL 18 |
 
 **Backend con Terraform.**
 
@@ -125,7 +123,7 @@ terraform init
 terraform apply \
   -var repo_url=https://github.com/<usuario>/<repo> \
   -var frontend_origin=https://<sitio>.netlify.app \
-  -var database_url='r2dbc:postgresql://<host>/<db>?sslmode=require' \
+  -var database_url='r2dbc:postgresql://<host>/<db>?sslMode=require' \
   -var jdbc_url='jdbc:postgresql://<host>/<db>?sslmode=require' \
   -var database_user=<usuario> -var database_password=<clave> \
   -var jwt_secret=<32+ caracteres> \
@@ -137,13 +135,9 @@ El apply crea el web service, carga todas las variables de entorno, define el he
 `/actuator/health` y deja el deploy automático en cada push. Flyway aplica las migraciones al
 arrancar contra Neon.
 
-**Frontend.** En Netlify: build `npm run build`, directorio `dist/frontend/browser` y redirect
-SPA (`/* → /index.html 200`). Apuntar la API al backend con el prefijo
-`https://<servicio>.onrender.com/api/v1`.
-
-**Detalle cross-site.** Con el front en Netlify y el backend en Render la cookie viaja entre
-dominios distintos: hace falta `COOKIE_SECURE=true` y `SameSite=None` en la cookie de sesión,
-más `CORS_ALLOWED_ORIGINS` con el origen exacto del sitio.
+Variables del web service: `SPRING_PROFILES_ACTIVE`, `DATABASE_URL`, `JDBC_URL`, `DATABASE_USER`,
+`DATABASE_PASSWORD`, `JWT_SECRET`, `TOKEN_TTL`, `COOKIE_SECURE`, `COOKIE_SAME_SITE`,
+`ADMIN_EMAIL`, `ADMIN_PASSWORD`, `CORS_ALLOWED_ORIGINS`, `FLYWAY_ENABLED`, `JAVA_TOOL_OPTIONS`.
 
 ## API
 

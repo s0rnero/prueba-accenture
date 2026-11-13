@@ -1,0 +1,65 @@
+<section class="flex flex-col gap-6">
+  <header class="flex flex-col gap-1">
+    <button class="text-accenture text-xs font-medium hover:underline" (click)="back()">
+      ← Sucursales
+    </button>
+
+    <div class="flex flex-wrap items-start justify-between gap-3">
+      <div class="flex flex-col gap-1">
+        <h1 class="text-2xl font-semibold tracking-tight">{{ branch()?.name ?? 'Sucursal' }}</h1>
+        <p class="text-sm text-neutral-500">Productos y stock de la sucursal.</p>
+      </div>
+      <app-button label="Nuevo producto" (pressed)="startCreate()" />
+    </div>
+  </header>
+
+  @if (error() && !modalOpen()) {
+    <p class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{{ error() }}</p>
+  }
+
+  @if (loading()) {
+    <p class="text-sm text-neutral-500">Cargando productos…</p>
+  } @else {
+    <ng-template #actions let-row>
+      <div class="flex justify-end gap-2">
+        <app-button label="Editar" variant="ghost" (pressed)="edit(find($any(row).id))" />
+        <app-button label="Eliminar" variant="danger" (pressed)="remove(find($any(row).id))" />
+      </div>
+    </ng-template>
+
+    <app-table
+      [columns]="columns"
+      [rows]="rows()"
+      [page]="page()"
+      [total]="total()"
+      [totalPages]="totalPages()"
+      [rowActions]="actions"
+      (pageChange)="goTo($event)"
+    />
+  }
+</section>
+
+<app-modal [open]="modalOpen()" (closed)="cancel()">
+  <h2 class="text-lg font-semibold tracking-tight">
+    {{ editing() ? 'Editar producto' : 'Nuevo producto' }}
+  </h2>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4 pt-4">
+    <app-input formControlName="name" label="Nombre del producto" placeholder="Café molido" />
+    <app-input formControlName="stock" label="Stock" type="number" />
+    <app-input formControlName="price" label="Precio" type="number" />
+
+    @if (error()) {
+      <p class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{{ error() }}</p>
+    }
+
+    <div class="flex justify-end gap-2">
+      <app-button label="Cancelar" variant="ghost" (pressed)="cancel()" />
+      <app-button
+        [label]="editing() ? 'Guardar' : 'Crear'"
+        [type]="'submit'"
+        [disabled]="saving()"
+      />
+    </div>
+  </form>
+</app-modal>

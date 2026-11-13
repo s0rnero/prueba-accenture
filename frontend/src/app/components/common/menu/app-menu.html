@@ -1,0 +1,17 @@
+@if (open()) {
+<button
+  type="button"
+  class="fixed inset-0 z-30"
+  aria-label="Cerrar menú"
+  (click)="closed.emit()"
+  animate.enter="fade-in"
+  animate.leave="fade-out"
+></button>
+<div
+  class="absolute bottom-full left-0 z-40 mb-2 flex w-52 flex-col overflow-hidden rounded-xl bg-neutral-100 shadow-xl"
+  animate.enter="menu-in"
+  animate.leave="menu-out"
+>
+  <ng-content />
+</div>
+}

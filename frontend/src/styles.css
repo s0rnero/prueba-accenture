@@ -1,0 +1,97 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-accenture: #a100ff;
+  --color-accenture-violet: #7500c0;
+  --color-accenture-mist: #f2f2f2;
+  --font-sans: 'Graphik', 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  @apply bg-accenture-mist font-sans text-black;
+}
+
+button {
+  @apply cursor-pointer text-left;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes menu-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes modal-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+.fade-in {
+  animation: fade-in 150ms ease-out;
+}
+.fade-out {
+  animation: fade-out 120ms ease-in;
+}
+.menu-in {
+  animation: menu-in 150ms ease-out;
+}
+.menu-out {
+  animation: menu-out 120ms ease-in;
+}
+.modal-in {
+  animation: modal-in 160ms ease-out;
+}
+.modal-out {
+  animation: modal-out 120ms ease-in;
+}

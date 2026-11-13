@@ -1,0 +1,113 @@
+name: prueba-accenture
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    container_name: pa-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-franchises}
+      POSTGRES_USER: ${POSTGRES_USER:-franchises}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD es obligatorio}
+    volumes:
+      - pa-postgres:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-franchises} -d ${POSTGRES_DB:-franchises}']
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+    mem_limit: 512m
+    networks:
+      - pa
+
+  backend:
+    build:
+      context: ../../backend
+      dockerfile: Dockerfile
+    image: prueba-accenture-backend:dev
+    container_name: pa-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - path: ../../.env
+        required: true
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
+      PORT: 8080
+      DATABASE_URL: r2dbc:postgresql://postgres:5432/${POSTGRES_DB:-franchises}
+      JDBC_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-franchises}
+      DATABASE_USER: ${POSTGRES_USER:-franchises}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD es obligatorio}
+      FLYWAY_ENABLED: ${FLYWAY_ENABLED:-true}
+      JAVA_TOOL_OPTIONS: ${JAVA_TOOL_OPTIONS:--Xmx256m -XX:+UseContainerSupport -XX:MaxRAMPercentage=70 -XX:InitialRAMPercentage=25 -Djava.io.tmpdir=/tmp/franchises}
+    expose:
+      - '8080'
+    read_only: true
+    tmpfs:
+      - /tmp/franchises:rw,noexec,nosuid,size=64m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -q -O - http://127.0.0.1:8080/actuator/health || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    restart: unless-stopped
+    mem_limit: 768m
+    networks:
+      - pa
+
+  frontend:
+    build:
+      context: ../../frontend
+      dockerfile: Dockerfile
+      target: development
+    image: prueba-accenture-frontend:dev
+    container_name: pa-frontend
+    volumes:
+      - ../../frontend/src:/app/src
+      - ../../frontend/public:/app/public
+      - ../../frontend/angular.json:/app/angular.json
+    environment:
+      CHOKIDAR_USEPOLLING: 'true'
+    expose:
+      - '4200'
+    restart: unless-stopped
+    mem_limit: 1g
+    networks:
+      - pa
+
+  nginx:
+    image: nginx:1.29-alpine
+    container_name: pa-nginx
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_started
+    ports:
+      - '127.0.0.1:80:80'
+      - '127.0.0.1:443:443'
+    volumes:
+      - ./nginx/prueba-accenture.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./certs:/etc/nginx/certs:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'wget --no-check-certificate -q -O - https://127.0.0.1/ >/dev/null || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - pa
+
+networks:
+  pa:
+    name: prueba-accenture-dev
+
+volumes:
+  pa-postgres:

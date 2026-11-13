@@ -1,0 +1,82 @@
+<section class="flex flex-col gap-6">
+  <header class="flex flex-col gap-1">
+    <h1 class="text-2xl font-semibold tracking-tight">Tus franquicias</h1>
+    <p class="text-sm text-neutral-500">
+      Elige una franquicia para ver sus sucursales.
+      @if (!auth.isAdmin()) {
+        Solo aparecen las franquicias asignadas a tu usuario.
+      }
+    </p>
+  </header>
+
+  @if (error() && !modalOpen()) {
+    <p class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{{ error() }}</p>
+  }
+
+  @if (loading()) {
+    <p class="text-sm text-neutral-500">Cargando franquicias…</p>
+  } @else {
+    <app-grid-elements>
+      @for (franchise of items(); track franchise.id) {
+        <app-grid-card>
+          <div class="flex items-start justify-between gap-2">
+            <h2 class="text-lg font-semibold tracking-tight">{{ franchise.name }}</h2>
+            <span class="bg-accenture-mist text-accenture rounded-full px-2 py-1 text-xs font-medium">
+              {{ franchise.branchCount }} sucursales
+            </span>
+          </div>
+
+          <dl class="grid grid-cols-2 gap-3 text-sm">
+            <div>
+              <dt class="text-xs tracking-wide text-neutral-400 uppercase">Productos</dt>
+              <dd class="font-semibold">{{ franchise.productCount }}</dd>
+            </div>
+            <div>
+              <dt class="text-xs tracking-wide text-neutral-400 uppercase">Stock total</dt>
+              <dd class="font-semibold">{{ franchise.totalStock }}</dd>
+            </div>
+          </dl>
+
+          @if (auth.isAdmin()) {
+            <div class="flex flex-wrap gap-2">
+              <app-button label="Ver" (pressed)="open(franchise)" />
+              <app-button label="Renombrar" variant="ghost" (pressed)="edit(franchise)" />
+              <app-button label="Eliminar" variant="danger" (pressed)="remove(franchise)" />
+            </div>
+          }
+        </app-grid-card>
+      }
+
+      @if (auth.isAdmin()) {
+        <app-grid-create-card label="Crear franquicia" (pressed)="startCreate()" />
+      }
+    </app-grid-elements>
+
+    @if (items().length === 0 && !auth.isAdmin()) {
+      <p class="text-sm text-neutral-600">No tenés franquicias asignadas.</p>
+    }
+  }
+</section>
+
+<app-modal [open]="modalOpen()" (closed)="cancel()">
+  <h2 class="text-lg font-semibold tracking-tight">
+    {{ editing() ? 'Renombrar franquicia' : 'Nueva franquicia' }}
+  </h2>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4 pt-4">
+    <app-input formControlName="name" label="Nombre de la franquicia" placeholder="Acento Centro" />
+
+    @if (error()) {
+      <p class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{{ error() }}</p>
+    }
+
+    <div class="flex justify-end gap-2">
+      <app-button label="Cancelar" variant="ghost" (pressed)="cancel()" />
+      <app-button
+        [label]="editing() ? 'Guardar' : 'Crear'"
+        [type]="'submit'"
+        [disabled]="saving()"
+      />
+    </div>
+  </form>
+</app-modal>

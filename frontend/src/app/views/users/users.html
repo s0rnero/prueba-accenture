@@ -1,0 +1,87 @@
+<section class="flex flex-col gap-6">
+  <header class="flex flex-wrap items-start justify-between gap-3">
+    <div class="flex flex-col gap-1">
+      <h1 class="text-2xl font-semibold tracking-tight">Usuarios</h1>
+      <p class="text-sm text-neutral-500">Alta y estado de las cuentas.</p>
+    </div>
+    <app-button label="Crear usuario" (pressed)="startCreate()" />
+  </header>
+
+  @if (error() && !modalOpen()) {
+    <p class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{{ error() }}</p>
+  }
+
+  <ng-template #actions let-row>
+    <div class="flex justify-end gap-2">
+      <app-button label="Editar" variant="ghost" (pressed)="edit(find($any(row).id))" />
+      <app-button label="Eliminar" variant="danger" (pressed)="remove(find($any(row).id))" />
+    </div>
+  </ng-template>
+
+  <app-table
+    [columns]="columns"
+    [rows]="rows()"
+    [page]="page()"
+    [total]="total()"
+    [totalPages]="totalPages()"
+    [rowActions]="actions"
+    (pageChange)="goTo($event)"
+  />
+</section>
+
+<app-modal [open]="modalOpen()" (closed)="cancel()">
+  <h2 class="text-lg font-semibold tracking-tight">
+    {{ editing() ? 'Editar usuario' : 'Nuevo usuario' }}
+  </h2>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4 pt-4">
+    <app-input formControlName="email" label="Correo" type="email" />
+
+    @if (!editing()) {
+      <app-input
+        formControlName="password"
+        label="Contraseña (8+, número y símbolo)"
+        type="password"
+      />
+    }
+
+    <app-input formControlName="displayName" label="Nombre" />
+
+    <label class="flex flex-col gap-1">
+      <span class="text-xs font-medium tracking-wide text-neutral-500 uppercase">Rol</span>
+      <select
+        formControlName="role"
+        class="focus:border-accenture w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-neutral-300"
+      >
+        <option value="USER">USER</option>
+        <option value="ADMIN">ADMIN</option>
+      </select>
+    </label>
+
+    @if (editing()) {
+      <label class="flex flex-col gap-1">
+        <span class="text-xs font-medium tracking-wide text-neutral-500 uppercase">Estado</span>
+        <select
+          formControlName="enabled"
+          class="focus:border-accenture w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-neutral-300"
+        >
+          <option [ngValue]="true">Activo</option>
+          <option [ngValue]="false">Inactivo</option>
+        </select>
+      </label>
+    }
+
+    @if (error()) {
+      <p class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{{ error() }}</p>
+    }
+
+    <div class="flex justify-end gap-2">
+      <app-button label="Cancelar" variant="ghost" (pressed)="cancel()" />
+      <app-button
+        [label]="editing() ? 'Guardar' : 'Crear'"
+        [type]="'submit'"
+        [disabled]="saving()"
+      />
+    </div>
+  </form>
+</app-modal>

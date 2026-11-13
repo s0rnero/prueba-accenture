@@ -1,0 +1,10 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+  <app-input formControlName="email" label="Correo" type="email" placeholder="nombre@empresa.com" />
+  <app-input formControlName="password" label="Contraseña" type="password" placeholder="••••••••" />
+
+  @if (error()) {
+  <p class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{{ error() }}</p>
+  }
+
+  <app-button label="Entrar" [type]="'submit'" [disabled]="loading()" [full]="true" />
+</form>

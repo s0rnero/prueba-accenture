@@ -1,0 +1,31 @@
+<app-modal [open]="open()" (closed)="closed.emit()">
+  <h2 class="text-lg font-semibold tracking-tight">Editar mi perfil</h2>
+  <p class="mt-1 text-sm text-neutral-500">
+    Tu correo no se puede cambiar. La contraseña es opcional.
+  </p>
+
+  <form [formGroup]="form" (ngSubmit)="save()" class="mt-5 flex flex-col gap-3">
+    <app-input formControlName="displayName" label="Nombre" />
+    <app-input
+      formControlName="password"
+      label="Nueva contraseña (opcional)"
+      type="password"
+      placeholder="8+ caracteres, número y símbolo"
+    />
+
+    <p class="text-xs text-neutral-400">{{ auth.session()?.email }}</p>
+
+    @if (error()) {
+    <p class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{{ error() }}</p>
+    }
+
+    <div class="flex justify-end gap-2 pt-1">
+      <app-button label="Cancelar" variant="ghost" (pressed)="cancel()" />
+      <app-button
+        [label]="saving() ? 'Guardando…' : 'Guardar'"
+        [type]="'submit'"
+        [disabled]="saving()"
+      />
+    </div>
+  </form>
+</app-modal>

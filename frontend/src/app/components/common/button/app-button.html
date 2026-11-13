@@ -1,0 +1,10 @@
+<button
+  [type]="type()"
+  [disabled]="disabled()"
+  [class]="classes()"
+  (click)="pressed.emit()"
+  class="cursor-pointer"
+>
+  {{ label() }}
+  <ng-content />
+</button>

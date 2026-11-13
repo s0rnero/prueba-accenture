@@ -1,0 +1,52 @@
+<div class="overflow-x-auto rounded-xl border border-neutral-200 bg-white">
+  <table class="min-w-full text-left text-sm">
+    <thead class="bg-accenture-mist text-xs tracking-wide text-neutral-500 uppercase">
+      <tr>
+        @for (column of columns(); track column.key) {
+          <th class="px-4 py-3 font-semibold">{{ column.label }}</th>
+        }
+        @if (rowActions()) {
+          <th class="px-4 py-3"></th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of rows(); track row['id']) {
+        <tr class="border-t border-neutral-100 hover:bg-accenture-mist">
+          @for (column of columns(); track column.key) {
+            <td class="px-4 py-3">{{ row[column.key] }}</td>
+          }
+          @if (rowActions()) {
+            <td class="px-4 py-3 text-right">
+              <ng-container *ngTemplateOutlet="rowActions()!; context: { $implicit: row }" />
+            </td>
+          }
+        </tr>
+      } @empty {
+        <tr>
+          <td class="px-4 py-6 text-center text-neutral-400" [attr.colspan]="columns().length + 1">
+            Sin registros
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+<div class="mt-4 flex items-center justify-between text-sm text-neutral-600">
+  <span>{{ total() }} registros</span>
+  <div class="flex gap-2">
+    <app-button
+      label="Anterior"
+      variant="ghost"
+      [disabled]="page() === 0"
+      (pressed)="pageChange.emit(page() - 1)"
+    />
+    <app-button
+      label="Siguiente"
+      variant="ghost"
+      [disabled]="page() + 1 >= totalPages()"
+      (pressed)="pageChange.emit(page() + 1)"
+    />
+  </div>
+</div>

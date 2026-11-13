@@ -1,0 +1,83 @@
+<section class="flex flex-col gap-6">
+  <header class="flex flex-col gap-1">
+    @if (franchiseId) {
+      <button class="text-accenture text-xs font-medium hover:underline" (click)="back()">
+        ← Franquicias
+      </button>
+    }
+    <h1 class="text-2xl font-semibold tracking-tight">Sucursales</h1>
+    <p class="text-sm text-neutral-500">
+      {{ franchiseId ? franchiseName() : 'Todas las sucursales de tus franquicias.' }}
+    </p>
+  </header>
+
+  @if (error() && !modalOpen()) {
+    <p class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{{ error() }}</p>
+  }
+
+  @if (loading()) {
+    <p class="text-sm text-neutral-500">Cargando sucursales…</p>
+  } @else {
+    <app-grid-elements>
+      @for (branch of items(); track branch.id) {
+        <app-grid-card>
+          <div class="flex items-start justify-between gap-2">
+            <h2 class="text-lg font-semibold tracking-tight">{{ branch.name }}</h2>
+            <span class="rounded-full bg-accenture-mist px-2 py-1 text-xs font-medium text-accenture">
+              {{ branch.franchiseName }}
+            </span>
+          </div>
+
+          <p class="text-sm text-neutral-500">{{ branch.productCount }} productos</p>
+
+          <div class="flex flex-wrap gap-2">
+            <app-button label="Ver" (pressed)="open(branch)" />
+            <app-button label="Renombrar" variant="ghost" (pressed)="edit(branch)" />
+            <app-button label="Eliminar" variant="danger" (pressed)="remove(branch)" />
+          </div>
+        </app-grid-card>
+      }
+
+      <app-grid-create-card label="Crear sucursal" (pressed)="startCreate()" />
+    </app-grid-elements>
+
+    @if (items().length === 0) {
+      <p class="text-sm text-neutral-600">Todavía no hay sucursales. Crea la primera.</p>
+    }
+  }
+</section>
+
+<app-modal [open]="modalOpen()" (closed)="cancel()">
+  <h2 class="text-lg font-semibold tracking-tight">
+    {{ editing() ? 'Renombrar sucursal' : 'Nueva sucursal' }}
+  </h2>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4 pt-4">
+    <label class="flex flex-col gap-1">
+      <span class="text-xs font-medium tracking-wide text-neutral-500 uppercase">Franquicia</span>
+      <select
+        formControlName="franchiseId"
+        class="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:border-accenture focus:ring-2 focus:ring-neutral-300 disabled:bg-neutral-100"
+      >
+        @for (franchise of franchises(); track franchise.id) {
+          <option [value]="franchise.id">{{ franchise.name }}</option>
+        }
+      </select>
+    </label>
+
+    <app-input formControlName="name" label="Nombre de la sucursal" placeholder="Sucursal Palermo" />
+
+    @if (error()) {
+      <p class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{{ error() }}</p>
+    }
+
+    <div class="flex justify-end gap-2">
+      <app-button label="Cancelar" variant="ghost" (pressed)="cancel()" />
+      <app-button
+        [label]="editing() ? 'Guardar' : 'Crear'"
+        [type]="'submit'"
+        [disabled]="saving()"
+      />
+    </div>
+  </form>
+</app-modal>

@@ -1,0 +1,41 @@
+<div class="flex h-full items-center justify-center p-4">
+  <div class="flex w-full max-w-sm flex-col gap-4 rounded-2xl bg-white p-8 shadow-xl">
+    <h1 class="text-2xl font-semibold">Acento<span class="text-accenture">.</span></h1>
+    <p class="text-sm">Creá tu cuenta de franquicia</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+      <app-input formControlName="displayName" label="Nombre" placeholder="Tu nombre" />
+      <app-input
+        formControlName="email"
+        label="Correo"
+        type="email"
+        placeholder="nombre@empresa.com"
+      />
+      <app-input
+        formControlName="password"
+        label="Contraseña"
+        type="password"
+        placeholder="••••••••"
+      />
+      <p class="text-xs text-neutral-500">
+        8 caracteres o más, con al menos un número y un símbolo.
+      </p>
+
+      @if (error()) {
+      <p class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{{ error() }}</p>
+      }
+
+      <app-button
+        label="Crear cuenta"
+        [type]="'submit'"
+        [disabled]="loading()"
+        [full]="true"
+      />
+    </form>
+
+    <p class="text-sm">
+      ¿Ya tenés cuenta?
+      <a routerLink="/login" class="underline">iniciá sesión</a>
+    </p>
+  </div>
+</div>

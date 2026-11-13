@@ -1,0 +1,11 @@
+<div class="flex h-full items-center justify-center p-4">
+  <div class="flex w-full max-w-sm flex-col gap-4 rounded-2xl bg-white p-8 shadow-xl">
+    <h1 class="text-2xl font-semibold">Acento<span class="text-accenture">.</span></h1>
+    <p class="text-sm">Administración de franquicias</p>
+    <app-auth-form [loading]="loading()" [error]="error()" (submitted)="submit($event)" />
+    <p class="text-sm">
+      ¿No tienes cuenta?
+      <a routerLink="/register" class="underline">regístrate aquí</a>
+    </p>
+  </div>
+</div>

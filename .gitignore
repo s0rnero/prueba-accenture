@@ -1,0 +1,42 @@
+# Tooling local (Node portable para el CLI de Angular) y dependencias de la raiz
+.tools/
+node_modules/
+
+# Harness
+.agents/
+.claude/
+.cursorrules
+AGENTS.md
+CLAUDE.md
+skills-lock.json
+scripts/setup.mjs
+scripts/verify.mjs
+scripts/install.sh
+
+# Secretos y certificados
+.env
+.env.*
+infra/docker/certs/*.pem
+infra/docker/certs/*.key
+
+# Backend
+backend/.gradle/
+backend/build/
+!backend/gradle/wrapper/gradle-wrapper.jar
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/.vite/
+
+# Terraform
+infra/terraform/.terraform/
+infra/terraform/terraform.tfvars
+*.tfstate
+*.tfstate.*
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.log

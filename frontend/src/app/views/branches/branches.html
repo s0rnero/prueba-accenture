@@ -7,7 +7,7 @@
     }
     <h1 class="text-2xl font-semibold tracking-tight">Sucursales</h1>
     <p class="text-sm text-neutral-500">
-      {{ franchiseId ? franchiseName() : 'Todas las sucursales de tus franquicias.' }}
+      {{ franchiseId ? franchiseName() : 'Todas las sucursales.' }}
     </p>
   </header>
 
@@ -32,17 +32,21 @@
 
           <div class="flex flex-wrap gap-2">
             <app-button label="Ver" (pressed)="open(branch)" />
-            <app-button label="Renombrar" variant="ghost" (pressed)="edit(branch)" />
-            <app-button label="Eliminar" variant="danger" (pressed)="remove(branch)" />
+            @if (auth.isAdmin()) {
+              <app-button label="Renombrar" variant="ghost" (pressed)="edit(branch)" />
+              <app-button label="Eliminar" variant="danger" (pressed)="remove(branch)" />
+            }
           </div>
         </app-grid-card>
       }
 
-      <app-grid-create-card label="Crear sucursal" (pressed)="startCreate()" />
+      @if (auth.isAdmin()) {
+        <app-grid-create-card label="Crear sucursal" (pressed)="startCreate()" />
+      }
     </app-grid-elements>
 
     @if (items().length === 0) {
-      <p class="text-sm text-neutral-600">Todavía no hay sucursales. Crea la primera.</p>
+      <p class="text-sm text-neutral-600">Todavía no hay sucursales.</p>
     }
   }
 </section>

@@ -5,6 +5,7 @@ import { AppButton } from '../../components/common/button/app-button';
 import { AppInput } from '../../components/common/input/app-input';
 import { AppModal } from '../../components/common/modal/app-modal';
 import { AppTable } from '../../components/common/table/app-table';
+import { AuthService } from '../../services/auth.service';
 import { Branch, FranchiseService } from '../../services/franchise.service';
 import { Product, ProductService } from '../../services/product.service';
 
@@ -14,6 +15,7 @@ import { Product, ProductService } from '../../services/product.service';
   templateUrl: './branch-detail.html',
 })
 export class BranchDetail {
+  readonly auth = inject(AuthService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);

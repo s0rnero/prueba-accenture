@@ -8,6 +8,7 @@ import { AppModal } from '../../components/common/modal/app-modal';
 import { GridCard } from '../../components/layout/content/grid-elements/grid-card';
 import { GridCreateCard } from '../../components/layout/content/grid-elements/grid-create-card';
 import { GridElements } from '../../components/layout/content/grid-elements/grid-elements';
+import { AuthService } from '../../services/auth.service';
 import { Branch, Franchise, FranchiseService } from '../../services/franchise.service';
 
 type BranchCard = Branch & { franchiseId: string; franchiseName: string };
@@ -26,6 +27,7 @@ type BranchCard = Branch & { franchiseId: string; franchiseName: string };
   templateUrl: './branches.html',
 })
 export class Branches {
+  readonly auth = inject(AuthService);
   private readonly api = inject(FranchiseService);
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);

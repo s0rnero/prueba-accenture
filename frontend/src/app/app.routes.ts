@@ -22,17 +22,17 @@ export const routes: Routes = [
   },
   {
     path: 'branches',
-    canActivate: [authGuard, adminGuard],
+    canActivate: [authGuard],
     loadComponent: () => import('./views/branches/branches').then((m) => m.Branches),
   },
   {
     path: 'branches/:fid',
-    canActivate: [authGuard, adminGuard],
+    canActivate: [authGuard],
     loadComponent: () => import('./views/branches/branches').then((m) => m.Branches),
   },
   {
     path: 'branches/:fid/:bid',
-    canActivate: [authGuard, adminGuard],
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./views/branch-detail/branch-detail').then((m) => m.BranchDetail),
   },

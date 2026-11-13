@@ -3,9 +3,6 @@
     <h1 class="text-2xl font-semibold tracking-tight">Tus franquicias</h1>
     <p class="text-sm text-neutral-500">
       Elige una franquicia para ver sus sucursales.
-      @if (!auth.isAdmin()) {
-        Solo aparecen las franquicias asignadas a tu usuario.
-      }
     </p>
   </header>
 
@@ -37,13 +34,13 @@
             </div>
           </dl>
 
-          @if (auth.isAdmin()) {
-            <div class="flex flex-wrap gap-2">
-              <app-button label="Ver" (pressed)="open(franchise)" />
+          <div class="flex flex-wrap gap-2">
+            <app-button label="Ver" (pressed)="open(franchise)" />
+            @if (auth.isAdmin()) {
               <app-button label="Renombrar" variant="ghost" (pressed)="edit(franchise)" />
               <app-button label="Eliminar" variant="danger" (pressed)="remove(franchise)" />
-            </div>
-          }
+            }
+          </div>
         </app-grid-card>
       }
 
@@ -52,8 +49,8 @@
       }
     </app-grid-elements>
 
-    @if (items().length === 0 && !auth.isAdmin()) {
-      <p class="text-sm text-neutral-600">No tenés franquicias asignadas.</p>
+    @if (items().length === 0) {
+      <p class="text-sm text-neutral-600">Todavía no hay franquicias.</p>
     }
   }
 </section>

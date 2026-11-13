@@ -1,7 +1,6 @@
 [build]
-  base = "frontend"
-  command = "npm ci && npm run build"
-  publish = "dist/frontend/browser"
+  command = "npm --prefix frontend install && npm --prefix frontend run build"
+  publish = "frontend/dist/frontend/browser"
 
 [build.environment]
   NODE_VERSION = "26"

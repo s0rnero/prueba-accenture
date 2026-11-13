@@ -40,3 +40,16 @@ infra/terraform/terraform.tfvars
 .DS_Store
 Thumbs.db
 *.log
+
+# Local Netlify folder
+.netlify
+
+# IDE output of the backend module
+backend/bin/
+
+# Terraform provider lock is kept, local plan files are not
+infra/terraform/.terraform/
+
+# Plan binario local
+infra/terraform/tfplan
+infra/terraform/*.tfplan

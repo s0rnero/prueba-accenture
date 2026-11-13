@@ -5,6 +5,12 @@ variable "render_api_key" {
   default     = null
 }
 
+variable "render_owner_id" {
+  description = "Owner (workspace) de Render. Vacio = se toma RENDER_OWNER_ID del entorno."
+  type        = string
+  default     = null
+}
+
 variable "repo_url" {
   description = "URL del repositorio publico que Render clona y compila."
   type        = string
@@ -46,7 +52,7 @@ variable "frontend_origin" {
 }
 
 variable "database_url" {
-  description = "URL reactiva de Neon: r2dbc:postgresql://host/db?sslmode=require."
+  description = "URL reactiva de Neon: r2dbc:postgresql://host/db?sslMode=require (camelCase)."
   type        = string
   sensitive   = true
 }

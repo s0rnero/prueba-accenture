@@ -2,6 +2,7 @@ resource "render_web_service" "backend" {
   name              = var.service_name
   plan              = var.plan
   region            = var.region
+  root_directory    = "backend"
   health_check_path = "/actuator/health"
 
   runtime_source = {
@@ -9,8 +10,8 @@ resource "render_web_service" "backend" {
       branch          = var.branch
       repo_url        = var.repo_url
       auto_deploy     = var.auto_deploy
-      context         = "./backend"
-      dockerfile_path = "./backend/Dockerfile"
+      context         = "."
+      dockerfile_path = "./Dockerfile"
     }
   }
 
@@ -23,10 +24,11 @@ resource "render_web_service" "backend" {
     JWT_SECRET             = { value = var.jwt_secret }
     TOKEN_TTL              = { value = "PT30M" }
     COOKIE_SECURE          = { value = "true" }
+    COOKIE_SAME_SITE       = { value = "Lax" }
     ADMIN_EMAIL            = { value = var.admin_email }
     ADMIN_PASSWORD         = { value = var.admin_password }
     CORS_ALLOWED_ORIGINS   = { value = var.frontend_origin }
     FLYWAY_ENABLED         = { value = "true" }
-    JAVA_TOOL_OPTIONS      = { value = "-XX:MaxRAMPercentage=60 -Djava.io.tmpdir=/tmp/franchises" }
+    JAVA_TOOL_OPTIONS      = { value = "-Xmx256m -XX:MaxRAMPercentage=70 -Djava.io.tmpdir=/tmp/franchises" }
   }
 }
